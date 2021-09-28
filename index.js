@@ -51,13 +51,15 @@ function createWindow() {
   });
 }
 
-function createWindowPrint() {
+async function createWindowPrint() {
   //Crea la ventana para imprimir
   printerWindow = new BrowserWindow({ show: false, webPreferences: { nodeIntegration: true } });
 
   let pathTemplatePrint = "";
 
-  let formatoImpresion = "58mm".toUpperCase();
+  const consulta = "select v.valor from variables v where v.nombre = 'Formato Impresion Venta';";
+  const res = await client.query(consulta);
+  let formatoImpresion = res.rows[0].valor.toUpperCase();
 
   switch (formatoImpresion) {
     case '58MM':
