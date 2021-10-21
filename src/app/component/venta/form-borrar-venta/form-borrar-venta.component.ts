@@ -28,7 +28,7 @@ export class FormBorrarVentaComponent implements OnInit {
   }
 
   vaciarCampos() {
-    this.venta.unaVenta = new Venta(null, null, new Date(), 0, 0);
+    this.venta.unaVenta = new Venta(null, null, new Date(), 0, 0, 0);
   }
 
 }

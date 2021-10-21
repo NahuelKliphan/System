@@ -10,7 +10,7 @@ function print58mm(printerWindow, data) {
         deviceName: data.impresion.impresora,
         margins: { marginType: 'custom', top: 0, bottom: 0, left: 0, right: 0 }
     };
-
+    
     printerWindow.webContents.send("printPDF", data.contenido);
     ipcMain.on("readyToPrint58mm", (event) => {
         if (!printing) {
@@ -145,19 +145,47 @@ function generarHtmlVenta58mm(data) {
                 </tr>
             </thead>
             <tbody>`;
-    var total = 0;
     data.listado.forEach(item => {
-        total += Number(item.total);
         html += `<tr>
                 <td class="cantidad">${item.cantidad}</td>
                 <td class="producto">${item.nombre}</td>
                 <td class="precio">$${currencyFormat(item.total)}</td>
                 </tr>`;
     });
-    html += `<tr>
+    html += `
+            <tr>
+            <td class="cantidad"></td>
+            <td class="producto">PAGO</td>
+            <td class="precio">${data.venta_forma_pago}</td>
+            </tr>
+            <tr>
+            <td class="cantidad"></td>
+            <td class="producto">SUBTOTAL</td>
+            <td class="precio">$${currencyFormat(data.venta_subtotal)}</td>
+            </tr>`;
+    if (data.venta_forma_pago == 'Efectivo') {
+        html += `
+        <tr>
+        <td class="cantidad"></td>
+        <td class="producto">DESCUENTO</td>
+        <td class="precio">- $${currencyFormat((Number(data.venta_subtotal) - Number(data.venta_total)))}</td>
+        </tr>
+        <tr>`;
+    }
+    if (data.venta_forma_pago == 'Credito') {
+        html += `
+        <tr>
+        <td class="cantidad"></td>
+        <td class="producto">RECARGO</td>
+        <td class="precio">+ $${currencyFormat((Number(data.venta_total) - Number(data.venta_subtotal)))}</td>
+        </tr>
+        <tr>`;
+    }
+    html += `
+            <tr>
             <td class="cantidad"></td>
             <td class="producto">TOTAL</td>
-            <td class="precio">${currencyFormat(total)}</td>
+            <td class="precio">$${currencyFormat(data.venta_total)}</td>
             </tr>
             </tbody>
         </table>

@@ -30,7 +30,8 @@ export class FormVentaComponent implements OnInit {
     $('.pantalla').css('height', `${pantalla}px`);
     pantalla = pantalla - 335;
     $('.tabla-nueva-venta').css('height', `${pantalla}px`);
-    this.venta.unaVenta = new Venta(1, null, new Date(), 0, 0);
+    $('#selectFormaPago').dropdown();
+    this.venta.unaVenta = new Venta(1, null, new Date(), 0, 0, 0);
     this.idVentaAutoincremental = 1;
     this.idVentaSeleccionada = 1;
     this.listadoVentasTab = [this.venta.unaVenta];
@@ -42,13 +43,14 @@ export class FormVentaComponent implements OnInit {
         empresa_nombre: this.empresa.unaEmpresa.nombre,
         empresa_direccion: this.empresa.unaEmpresa.direccion,
         empresa_logo: this.empresa.unaEmpresa.logo_imprimir,
+        venta_subtotal: this.venta.unaVenta.subtotal,
+        venta_total: this.venta.unaVenta.total,
+        venta_forma_pago: this.venta.unaVenta.forma_pago,
         listado: [...this.venta.unaVenta.items]
       }
       this.ipc.ipcRenderer.send('print', data);
       this.venta.guardarVenta(unaVenta);
       this.cancelar();
-    } else {
-      alertify.notify('No hay ningun item', 'error', 5);
     }
   }
 
@@ -60,6 +62,8 @@ export class FormVentaComponent implements OnInit {
       this.venta.unaVenta = this.listadoVentasTab[this.listadoVentasTab.length - 1];
     }
     this.idVentaSeleccionada = this.venta.unaVenta.id;
+    $('#selectFormaPago').dropdown('set selected', this.venta.unaVenta.forma_pago);
+    this.setFormaPago(this.venta.unaVenta.forma_pago);
   }
 
   abrirLista() {
@@ -70,17 +74,16 @@ export class FormVentaComponent implements OnInit {
   }
 
   formCompleto() {
-    if (this.venta.unaVenta.items.length > 0) {
-      return true;
-    }
-    else {
+    if (this.venta.unaVenta.items.length <= 0) {
+      alertify.notify('No hay ningun item', 'error', 5);
       return false;
     }
+    return true;
   }
 
   nuevaVenta() {
     this.idVentaAutoincremental++;
-    this.venta.unaVenta = new Venta(this.idVentaAutoincremental, "", new Date(), 0, 0)
+    this.venta.unaVenta = new Venta(this.idVentaAutoincremental, "", new Date(), 0, 0, 0)
     this.listadoVentasTab.push(this.venta.unaVenta);
     this.idVentaSeleccionada = this.idVentaAutoincremental;
   }
@@ -89,11 +92,18 @@ export class FormVentaComponent implements OnInit {
     this.idVentaSeleccionada = unaVenta.id;
     this.venta.unaVenta = unaVenta;
     this.venta.unaVenta.items = unaVenta.items;
+    $('#selectFormaPago').dropdown('set selected', unaVenta.forma_pago);
+    this.setFormaPago(unaVenta.forma_pago);
   }
 
-  agregarItem(){
-    this.producto.unProducto = new Producto(-1,"-1","", null, null, null,"","",null);
+  agregarItem() {
+    this.producto.unProducto = new Producto(-1, "-1", "", null, null, null, "", "", null);
     $('#cargaItemModal').modal({ closable: false }).modal('show');
+  }
+
+  setFormaPago(formaPago) {
+    this.venta.unaVenta.forma_pago = formaPago;
+    this.venta.calcularPrecio();
   }
 
 }

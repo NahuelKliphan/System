@@ -29,12 +29,16 @@
         <table class="ui table" style="text-align: center;margin-left: auto;margin-right: 0px;width: 20rem;">
             <thead>
                 <tr>
-                    <th><b>Ganancia:</b></th>
-                    <th><b>{{item.gananciaItems | currency}}</b></th>
+                    <th><b>Forma de pago</b></th>
+                    <th><b>{{venta.unaVenta.forma_pago}}</b></th>
                 </tr>
                 <tr>
-                    <th><b>Total:</b></th>
-                    <th><b>{{item.totalItems | currency}}</b></th>
+                    <th><b>Subtotal</b></th>
+                    <th><b>{{venta.unaVenta.subtotal | currency}}</b></th>
+                </tr>
+                <tr>
+                    <th><b>Total</b></th>
+                    <th><b>{{venta.unaVenta.total | currency}}</b></th>
                 </tr>
             </thead>
         </table>

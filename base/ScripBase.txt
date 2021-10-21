@@ -23,8 +23,10 @@ create table ventas(
 	id serial,
 	cliente_nombre varchar(30),
 	fecha date,
+	subtotal decimal,
 	total decimal,
 	ganancia decimal,
+	forma_pago varchar(30),
 	primary key (id)
 );
 

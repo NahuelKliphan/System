@@ -30,8 +30,7 @@ export class FormCantidadComponent implements OnInit {
         this.item.unItem = new Item(this.item.idItemTemp, 1, this.producto.unProducto.precio_venta * this.item.unItem.cantidad, this.producto.unProducto.codigo, this.producto.unProducto.nombre, this.item.unItem.cantidad, this.producto.unProducto.precio_venta, this.producto.unProducto.precio_costo, this.producto.unProducto.precio_venta * this.item.unItem.cantidad - this.producto.unProducto.precio_costo * this.item.unItem.cantidad);
         this.item.idItemTemp++;
         this.venta.unaVenta.items.push(this.item.unItem);
-        this.venta.unaVenta.total = this.venta.unaVenta.total + this.item.unItem.total;
-        this.venta.unaVenta.ganancia = this.venta.unaVenta.ganancia + this.item.unItem.ganancia;
+        this.venta.calcularPrecio();
         alertify.notify('Item cargado', 'success', 5);
         $('#listaProducto').modal({ closable: false }).modal('show');
         this.vaciarForm();

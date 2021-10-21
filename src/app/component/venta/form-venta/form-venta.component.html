@@ -51,7 +51,7 @@
                     </div>
                     <div class="sixteen wide column"
                         style="display: flex;align-items: flex-start;justify-content: space-between;">
-                        <div style="text-align: center;">
+                        <div>
                             <div class="ui floated button {{base.unaSkin.botonCancelar}}" style="margin-right: 20px;"
                                 (click)="cancelar()">
                                 <i class="close icon"></i> Cancelar
@@ -61,13 +61,23 @@
                                 <div><i class="dollar sign icon"></i> Vender </div>
                             </div>
                         </div>
-                        <div class="field ">
+                        <select (change)="setFormaPago($event.target.value)" id="selectFormaPago" class="ui dropdown">
+                            <option value="">Forma de pago</option>
+                            <option value="Efectivo">Efectivo</option>
+                            <option value="Debito">Debito</option>
+                            <option value="Credito">Credito</option>
+                        </select>
+                        <div class="field">
+                            <div style="margin-right: 5px;" class="ui input labeled right icon">
+                                <a class="ui label">Subtotal:</a>
+                                <i class="money bill alternate outline icon green"></i>
+                                <input readonly type="text" name="subtotal"
+                                    value="{{venta.unaVenta.subtotal | currency }}">
+                            </div>
                             <div class="ui input labeled right icon">
-                                <a class="ui label">
-                                    Total:
-                                </a>
+                                <a class="ui label">Total:</a>
                                 <i class="dollar sign icon green"></i>
-                                <input readonly type="text" name="nombre" value="{{venta.unaVenta.total | currency }}">
+                                <input readonly type="text" name="total" value="{{venta.unaVenta.total | currency }}">
                             </div>
                         </div>
                     </div>

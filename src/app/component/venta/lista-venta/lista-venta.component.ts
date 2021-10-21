@@ -33,6 +33,7 @@ export class ListaVentaComponent implements OnInit {
 
   buscarItems(unaVenta: Venta) {
     this.item.getItems(unaVenta);
+    this.venta.unaVenta = unaVenta;
     $("#ventanaItems").modal("show");
   }
 

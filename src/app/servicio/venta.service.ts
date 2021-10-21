@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ElectronService } from 'ngx-electron';
 import { Venta } from '../model/Venta';
+import { BaseService } from './base.service';
 import { ItemService } from './item.service';
 import { ProductoService } from './producto.service';
 
@@ -11,11 +12,11 @@ declare var alertify: any;
 })
 export class VentaService {
 
-  constructor(private ipc: ElectronService, private producto: ProductoService, private item: ItemService) { }
+  constructor(private ipc: ElectronService, private producto: ProductoService, private item: ItemService, private base: BaseService) { }
 
   //Venta
   listadoVenta: Venta[] = [];
-  unaVenta: Venta = new Venta(1, null, new Date(), 0, 0);
+  unaVenta: Venta = new Venta(1, null, new Date(), 0, 0, 0);
   desde: string = "";
   hasta: string = "";
   totalVentas: number = 0;
@@ -49,7 +50,7 @@ export class VentaService {
     this.item.insertItems = "";
     this.producto.updateProductos = "";
     unaVenta.cliente_nombre = ((unaVenta.cliente_nombre != null && unaVenta.cliente_nombre != '') ? "'" + unaVenta.cliente_nombre + "'" : null);
-    const consulta = `INSERT INTO VENTAS (cliente_nombre, fecha, total, ganancia) VALUES (${unaVenta.cliente_nombre},'${new Date(unaVenta.fecha).toDateString()}', ${unaVenta.total}, ${unaVenta.ganancia}) RETURNING ID;`;
+    const consulta = `INSERT INTO VENTAS (cliente_nombre, fecha, total, ganancia, subtotal, forma_pago) VALUES (${unaVenta.cliente_nombre},'${new Date(unaVenta.fecha).toDateString()}', ${unaVenta.total}, ${unaVenta.ganancia}, ${unaVenta.subtotal}, '${unaVenta.forma_pago}') RETURNING ID;`;
     let res = this.ipc.ipcRenderer.sendSync('base', consulta);
     if (res[0] == 'ok') {
       let id = res[1][0].id;
@@ -107,6 +108,27 @@ export class VentaService {
     } else {
       alertify.notify('Error ' + res[1].code, 'warning', 5);
       return [];
+    }
+  }
+
+  calcularPrecio() {
+    this.unaVenta.total = 0;
+    this.unaVenta.subtotal = 0;
+    this.unaVenta.ganancia = 0;
+    this.unaVenta.items.forEach(i => {
+      this.unaVenta.subtotal = this.unaVenta.subtotal + i.total;
+      this.unaVenta.ganancia = this.unaVenta.ganancia + i.ganancia;
+    });
+    if (this.unaVenta.forma_pago == 'Efectivo') {
+      let descuento = this.base.getVariable("Descuento pago con Efectivo");
+      this.unaVenta.total = this.unaVenta.subtotal - (this.unaVenta.subtotal * (Number(descuento) / 100));
+    }
+    if (this.unaVenta.forma_pago == 'Debito') {
+      this.unaVenta.total = this.unaVenta.subtotal;
+    }
+    if (this.unaVenta.forma_pago == 'Credito') {
+      let recargo = this.base.getVariable("Recargo pago con Credito");
+      this.unaVenta.total = this.unaVenta.subtotal + (this.unaVenta.subtotal * (Number(recargo) / 100));
     }
   }
 

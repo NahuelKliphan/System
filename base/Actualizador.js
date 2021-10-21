@@ -24,6 +24,7 @@ async function ActualizarBase(version) {
     await ActualizadorINC0024();
     await ActualizadorINC0025();
     await ActualizadorImpresoraLaser();
+    await ActualizadorAddCampoSubTotal();
 
     await ActualizarVersion(version);
     console.log("Base actualizada");
@@ -185,6 +186,30 @@ async function ActualizadorImpresoraLaser() {
     consulta += `DO $$ BEGIN IF NOT EXISTS(SELECT * FROM information_schema.columns
         WHERE table_name='entidades' and column_name='logo_imprimir') THEN
         alter table entidades add column logo_imprimir text NULL;
+        END IF; END $$;`;
+
+    await client.query(consulta);
+}
+
+async function ActualizadorAddCampoSubTotal() {
+
+    let consulta = `DO $$ BEGIN IF NOT EXISTS(SELECT * FROM information_schema.columns
+        WHERE table_name='ventas' and column_name='subtotal') THEN
+        alter table ventas add column subtotal numeric;
+        update ventas set subtotal = total where subtotal is null;
+        END IF; END $$;`;
+    consulta += `DO $$ BEGIN IF NOT EXISTS(SELECT * FROM information_schema.columns
+        WHERE table_name='ventas' and column_name='forma_pago') THEN
+        alter table ventas add column forma_pago varchar(30);
+        update ventas set forma_pago = 'Efectivo' where forma_pago is null;
+        END IF; END $$;`;
+    consulta += `DO $$ BEGIN IF NOT EXISTS(SELECT * FROM variables
+        WHERE nombre='Descuento pago con Efectivo') THEN
+        insert into variables (nombre, valor, tipo) values ('Descuento pago con Efectivo', '5', 'texto');
+        END IF; END $$;`;
+    consulta += `DO $$ BEGIN IF NOT EXISTS(SELECT * FROM variables
+        WHERE nombre='Recargo pago con Credito') THEN
+        insert into variables (nombre, valor, tipo) values ('Recargo pago con Credito', '20', 'texto');
         END IF; END $$;`;
 
     await client.query(consulta);

@@ -18,12 +18,7 @@ export class FormItemComponent implements OnInit {
 
   borrar(unItem: Item) {
     this.venta.unaVenta.items = this.venta.unaVenta.items.filter(i => i.id != unItem.id);
-    this.venta.unaVenta.total = 0;
-    this.venta.unaVenta.ganancia = 0;
-    this.venta.unaVenta.items.forEach(i => {
-      this.venta.unaVenta.total = this.venta.unaVenta.total + i.total;
-      this.venta.unaVenta.ganancia = this.venta.unaVenta.ganancia + i.ganancia;
-    })
+    this.venta.calcularPrecio();
   }
 
 }
