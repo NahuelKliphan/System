@@ -23,6 +23,7 @@ export class VentaService {
   totalCostos: number = 0;
   totalGanancias: number = 0;
   filtro: string = "";
+  redondear: boolean = true;
 
   //Metodos de Venta
 
@@ -119,16 +120,22 @@ export class VentaService {
       this.unaVenta.subtotal = this.unaVenta.subtotal + i.total;
       this.unaVenta.ganancia = this.unaVenta.ganancia + i.ganancia;
     });
+    if (this.unaVenta.forma_pago == 'Debito') {
+      this.unaVenta.total = this.unaVenta.subtotal;
+    }
     if (this.unaVenta.forma_pago == 'Efectivo') {
       let descuento = this.base.getVariable("Descuento pago con Efectivo");
       this.unaVenta.total = this.unaVenta.subtotal - (this.unaVenta.subtotal * (Number(descuento) / 100));
-    }
-    if (this.unaVenta.forma_pago == 'Debito') {
-      this.unaVenta.total = this.unaVenta.subtotal;
+      if (this.redondear) {
+        this.unaVenta.total = this.base.redondearPrecio(5, this.unaVenta.total);
+      }
     }
     if (this.unaVenta.forma_pago == 'Credito') {
       let recargo = this.base.getVariable("Recargo pago con Credito");
       this.unaVenta.total = this.unaVenta.subtotal + (this.unaVenta.subtotal * (Number(recargo) / 100));
+      if (this.redondear) {
+        this.unaVenta.total = this.base.redondearPrecio(5, this.unaVenta.total);
+      }
     }
   }
 

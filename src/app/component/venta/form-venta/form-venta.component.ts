@@ -28,13 +28,15 @@ export class FormVentaComponent implements OnInit {
     var pantalla = $(window).height();
     pantalla = pantalla - 135;
     $('.pantalla').css('height', `${pantalla}px`);
-    pantalla = pantalla - 335;
+    pantalla = pantalla - 395;
     $('.tabla-nueva-venta').css('height', `${pantalla}px`);
-    $('#selectFormaPago').dropdown();
     this.venta.unaVenta = new Venta(1, null, new Date(), 0, 0, 0);
     this.idVentaAutoincremental = 1;
     this.idVentaSeleccionada = 1;
     this.listadoVentasTab = [this.venta.unaVenta];
+    $('#selectFormaPago').dropdown({ direction: 'upward' });
+    $('#selectFormaPago').dropdown('set selected', this.venta.unaVenta.forma_pago);
+    this.setFormaPago(this.venta.unaVenta.forma_pago);
   }
 
   guardar(unaVenta: Venta) {

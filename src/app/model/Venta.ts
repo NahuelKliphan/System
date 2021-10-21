@@ -20,7 +20,7 @@ export class Venta {
         this.subtotal = subtotal;
         this.total = total;
         this.items = [];
-        this.forma_pago = 'Efectivo';
+        this.forma_pago = 'Debito';
     }
 
 }
