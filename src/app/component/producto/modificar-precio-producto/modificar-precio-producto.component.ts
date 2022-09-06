@@ -72,7 +72,6 @@ export class ModificarPrecioProductoComponent implements OnInit {
       consulta += registro;
       $('#modificarPrecioProducto').modal('hide').modal('hide dimmer');
       this.vaciarForm();
-      console.log(consulta)
       this.producto.modificarPrecioProducto(consulta);
     }
   }

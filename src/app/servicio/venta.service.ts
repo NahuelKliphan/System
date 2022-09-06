@@ -37,6 +37,16 @@ export class VentaService {
     }
   }
 
+  getVentasPorMes(mes: string, anio: string) {
+    const consulta = `SELECT ID, TOTAL, GANANCIA FROM VENTAS WHERE cast(DATE_PART('month', FECHA) as INTEGER) = '${mes}' and CAST(DATE_PART('year', FECHA) as INTEGER) = '${anio}';`;
+    let res = this.ipc.ipcRenderer.sendSync('base', consulta);
+    if (res[0] == 'ok') {
+      return res[1];
+    } else {
+      alertify.notify('Error ' + res[1].code, 'warning', 5);
+    }
+  }
+
   getVentasEntreFechas(desde: string, hasta: string) {
     const consulta = `SELECT * FROM VENTAS WHERE fecha BETWEEN '${desde}' and '${hasta}' ORDER BY id DESC`;
     let res = this.ipc.ipcRenderer.sendSync('base', consulta);
@@ -95,20 +105,6 @@ export class VentaService {
       }
     } else {
       alertify.notify('Error ' + res[1].code, 'warning', 5);
-    }
-  }
-
-  getEstadisticas(year: string) {
-    const consulta = `select cast(date_part('month', fecha) as integer) as mes, count(id) as cantidad, trunc(sum(total)) as ventas, trunc(sum(ganancia)) as ganancias, trunc((sum(total) - sum (ganancia))) as costos
-    from ventas
-    where date_part('year', fecha) = '${year}'
-    group by 1`;
-    let res = this.ipc.ipcRenderer.sendSync('base', consulta);
-    if (res[0] == 'ok') {
-      return res[1];
-    } else {
-      alertify.notify('Error ' + res[1].code, 'warning', 5);
-      return [];
     }
   }
 
