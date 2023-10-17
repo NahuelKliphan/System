@@ -34,7 +34,7 @@
     </div>
   </div>
   <div class="ui fluid action input left icon" style="margin-top: 20px;">
-    <input type="text" placeholder="Buscar..." (input)="buscar()" (keyup.enter)="buscar()" (keyup.escape)="salir()"
+    <input type="text" placeholder="Buscar..." (keyup.enter)="buscar()" (keyup.escape)="salir()"
       name="busqueda" [(ngModel)]="producto.busqueda" id="buscarProducto" autofocus>
     <div class="ui search ico button" (click)="buscar()">Buscar</div>
     <i class="search icon"></i>
@@ -48,7 +48,7 @@
         <a style="margin-top: 5px;" class="header"><i class="barcode icon blue"></i>{{unProducto.codigo}}</a>
         <div class="description">
           <p><i class="tag icon"></i> <b>Nombre: </b> {{unProducto.nombre}} </p>
-          <p><i class="green dollar sign icon"></i> <b>Precio costo: </b> {{unProducto.precio_costo | currency}} </p>
+          <p *ngIf="!producto.enVenta"><i class="green dollar sign icon"></i> <b>Precio costo: </b> {{unProducto.precio_costo | currency}} </p>
           <div *ngIf="!producto.enVenta" class="ui right floated button {{base.unaSkin.botonEliminar}}"
             style="margin-right: 30px;" (click)="borrar(unProducto)">
             <i class="trash alternate outline icon"></i> Borrar
