@@ -35,7 +35,6 @@ export class FormProductoComponent implements OnInit {
     this.categoria.getCategorias();
   }
 
-  @HostListener('keydown.enter')
   guardar() {
     if (this.producto.editar) {
       if (this.formCompleto()) {
